@@ -1,0 +1,2 @@
+public class Supertrump {
+}
