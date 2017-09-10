@@ -1,23 +1,20 @@
 public class Supertrump extends Card {
     private String name;
-    private String effect;
+    private String trump;
 
-    public Supertrump(String name, String effect) {
+    public Supertrump(String name, String trump) {
         this.name = name;
-        this.effect = effect;
+        this.trump = trump;
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
-    public String getEffect() {
-        return effect;
-    }
+    @Override
+    public String getTrump() { return trump; }
 
     @Override
     public String toString() {
-        return name + ", " + effect;
+        return name + ", " + trump;
     }
 }

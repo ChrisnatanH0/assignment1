@@ -1,11 +1,7 @@
-import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.InputMismatchException;
-import java.util.Random;
-import java.util.Scanner;
 
 public class Game {
     public static void main(String[] args) throws InputMismatchException{
@@ -15,18 +11,23 @@ public class Game {
         ArrayList<Card> player2Cards = new ArrayList<>();
         ArrayList<Card> player3Cards = new ArrayList<>();
         ArrayList<Card> player4Cards = new ArrayList<>();
-        String[] superTrumpList = {"miner", "petrologist", "gemmologist", "mineralogist", "geophysicist", "geologist"};
-        String[] trumpList = {"ecovalue", "abundance", "hardness", "cleavage", "gravity", "any"};
+        ArrayList<Card> currentCardSet = new ArrayList<>();
+        List<String> superTrumps = Arrays.asList("miner", "petrologist", "gemmologist", "mineralogist", "geophysicist", "geologist");
+        List<String> trumps = Arrays.asList("ecovalue", "abundance", "hardness", "cleavage", "gravity", "any");
         ArrayList<Integer> playerWins = new ArrayList<>();
         ArrayList<Integer> playerPass = new ArrayList<>();
         boolean firstTurn = true;
-        int numOfPlayers;
+        boolean flag = true;
+        int numOfPlayers, playerTurn = 1, cardSelect = 0;
+        double currentHighest = 0, valueSelect;
+        String trumpSelect = "hardness";
+        String currentHighestString = "";
 
         ReadCSV(cards);
 
         //Adds the SuperTrump cards to the list of cards
         for (int i = 0; i < 6; i++) {
-            Card st = new Supertrump(superTrumpList[i], trumpList[i]);
+            Card st = new Supertrump(superTrumps.get(i), trumps.get(i));
             cards.add(st);
         }
 
@@ -43,6 +44,97 @@ public class Game {
         ShuffleCards(cards, player2Cards);
         if (numOfPlayers >= 3) ShuffleCards(cards, player3Cards);
         if (numOfPlayers == 4) ShuffleCards(cards,player4Cards);
+
+        while (flag) {
+            //Display list of cards
+            switch (playerTurn) {
+                case 1:
+                    DisplayCards(player1Cards);
+                    currentCardSet = player1Cards;
+                    break;
+                case 2:
+                    DisplayCards(player2Cards);
+                    currentCardSet = player2Cards;
+                    break;
+                case 3:
+                    DisplayCards(player3Cards);
+                    currentCardSet = player3Cards;
+                    break;
+                case 4:
+                    DisplayCards(player4Cards);
+                    currentCardSet = player4Cards;
+                    break;
+            }
+
+            System.out.print("Select your card: ");
+            cardSelect = playerInput.nextInt();
+            //Error checking
+            do {
+                if (cardSelect < 0 || cardSelect >= currentCardSet.size() || cardSelect != 999) {
+                    System.out.println("ERROR! Invalid input!");
+                    System.out.print("Select your card: ");
+                    cardSelect = playerInput.nextInt();
+                } else if (firstTurn && superTrumps.contains(currentCardSet.get(cardSelect).getName())){
+                    System.out.println("You cannot use a SuperTrump card right now!");
+                    System.out.print("Select your card: ");
+                    cardSelect = playerInput.nextInt();
+                } else {
+                    break;
+                }
+            } while (true);
+
+            //If this is the first turn
+            if (firstTurn) {
+                trumpSelect = SelectTrump(playerInput, trumps);
+                currentHighest = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
+                currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(cardSelect).getStringBasedOnInput(trumpSelect);
+                System.out.println(currentHighestString);
+                firstTurn = false;
+            }
+
+            //If this isn't the first turn
+            else {
+                //If it is a regular card
+                if (!(superTrumps.contains(currentCardSet.get(cardSelect).getName()))) {
+                    valueSelect = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
+                    if (valueSelect < currentHighest) {
+                        System.out.println("The value is not high enough!");
+                        System.out.println(currentHighestString);
+                    } else {
+                        currentHighest = valueSelect;
+                        currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(cardSelect).getStringBasedOnInput(trumpSelect);
+                        System.out.println(currentHighestString);
+                    }
+                }
+
+                //If it is a SuperTrump card
+                else {
+                    //Check if it is the Geologist card
+                    if (!Objects.equals(currentCardSet.get(cardSelect).getName(), "geologist")) {
+                        trumpSelect = currentCardSet.get(cardSelect).getTrump();
+                    } else {
+                        trumpSelect = SelectTrump(playerInput, trumps);
+                    }
+                    System.out.println("Trump has been changed to: " + trumpSelect);
+                    playerPass.clear();
+                    currentHighestString = "The current highest " + trumpSelect + ": " + 0;
+                    System.out.println(currentHighestString);
+                }
+            }
+        }
+    }
+
+    //Select a trump
+    public static String SelectTrump(Scanner playerInput, List<String> trumps) {
+        String trumpSelect;
+        System.out.print("Select which value to use (Hardness, Gravity, Cleavage, Abundance, EcoValue): ");
+        trumpSelect = playerInput.next().toLowerCase();
+        while (!(trumps.contains(trumpSelect))) {
+            System.out.println("ERROR! Invalid input!");
+            System.out.print("Select which trump to use (Hardness, Gravity, Cleavage, Abundance, EcoValue): ");
+            trumpSelect = playerInput.next().toLowerCase();
+        }
+        return trumpSelect;
     }
 
     //Reads the card.csv file
@@ -86,5 +178,13 @@ public class Game {
             arrayNum = randNum.nextInt(cards.size());
             playerCards.add(cards.get(arrayNum));
         }
+    }
+
+    //Prints a list of the player's cards
+    public static void DisplayCards(ArrayList<Card> playerCards) {
+        for (int i = 0; i < playerCards.size(); i++) {
+            System.out.println(i + " -> " + playerCards.get(i));
+        }
+        System.out.println(999 + " -> pass your turn");
     }
 }

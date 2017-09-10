@@ -1,6 +1,13 @@
+import java.util.Arrays;
+import java.util.List;
+
 public class Card {
     private String name, cleavage, abundance, ecoValue;
     private double hardness, gravity;
+    private List<String> cleavageList = Arrays.asList("none", "poor/none", "1 poor", "2 poor", "1 good", "1 good/1 poor", "2 good", "3 good", "1 perfect", "1 perfect/1 good", "1 perfect/2 good", "2 perfect/1 good", "3 perfect", "4 perfect", "6 perfect");
+    private List<String> abundanceList = Arrays.asList("ultratrace", "trace", "low", "moderate", "high", "very high");
+    private List<String> ecoValueList = Arrays.asList("trivial", "low", "moderate", "high", "very high", "I'm rich!");
+
 
     public Card(String name, double hardness, double gravity, String cleavage, String abundance, String ecoValue) {
         this.name = name;
@@ -21,28 +28,44 @@ public class Card {
     public String getCleavage() { return cleavage; }
     public String getAbundance() { return abundance; }
     public String getEcoValue() { return ecoValue; }
+    public String getTrump() { return "hardness"; }
 
-    public void getBasedOnInput(String input) {
+    public int getCleavageNum() { return cleavageList.indexOf(cleavage); }
+    public int getAbundanceNum() { return abundanceList.indexOf(abundance); }
+    public int getEcoValueNum() { return ecoValueList.indexOf(ecoValue); }
+
+    public double getValueBasedOnInput(String input) {
+        switch (input) {
+            case "hardness":
+                return hardness;
+            case "gravity":
+                return gravity;
+            case "cleavage":
+                return cleavageList.indexOf(cleavage);
+            case "abundance":
+                return abundanceList.indexOf(abundance);
+            case "ecovalue":
+                return ecoValueList.indexOf(ecoValue);
+        }
+        return 0;
+    }
+
+    public String getStringBasedOnInput (String input) {
         switch (input) {
             case "name":
-                getName();
-                break;
+                return name;
             case "hardness":
-                getHardness();
-                break;
+                return String.valueOf(hardness);
             case "gravity":
-                getGravity();
-                break;
+                return String.valueOf(gravity);
             case "cleavage":
-                getCleavage();
-                break;
+                return cleavage;
             case "abundance":
-                getAbundance();
-                break;
+                return abundance;
             case "ecovalue":
-                getEcoValue();
-                break;
+                return ecoValue;
         }
+        return input;
     }
 
     @Override
