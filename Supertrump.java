@@ -18,6 +18,6 @@ public class Supertrump extends Card {
 
     @Override
     public String toString() {
-        return name + ", " + effect + " expert.";
+        return name + ", " + effect;
     }
 }
