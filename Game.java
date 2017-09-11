@@ -99,7 +99,6 @@ public class Game {
                 trumpSelect = SelectTrump(playerInput, trumps);
                 currentHighest = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
                 currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(cardSelect).getStringBasedOnInput(trumpSelect);
-                System.out.println(currentHighestString);
                 firstTurn = false;
             }
 
@@ -118,8 +117,6 @@ public class Game {
                     }
                     currentHighest = valueSelect;
                     currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(cardSelect).getStringBasedOnInput(trumpSelect);
-                    System.out.println(currentHighestString);
-
                 }
 
                 //If it is a SuperTrump card
@@ -132,10 +129,13 @@ public class Game {
                     }
                     System.out.println("Trump has been changed to: " + trumpSelect);
                     playerPass.clear();
+                    currentHighest = 0;
                     currentHighestString = "The current highest " + trumpSelect + ": " + 0;
-                    System.out.println(currentHighestString);
                 }
             }
+
+            System.out.println(currentHighestString);
+
             //Remove a card
             if (cardSelect != 999) { currentCardSet.remove(cardSelect); }
 
@@ -173,7 +173,6 @@ public class Game {
             //Check if all but one player chose to pass
             if (playerPass.size() == numOfPlayers - 1) {
                 playerPass.clear();
-                firstTurn = true;
             }
 
             //Check if all but one player wins
