@@ -14,8 +14,8 @@ public class Game {
         ArrayList<Card> currentCardSet = new ArrayList<>();
         List<String> superTrumps = Arrays.asList("miner", "petrologist", "gemmologist", "mineralogist", "geophysicist", "geologist");
         List<String> trumps = Arrays.asList("ecovalue", "abundance", "hardness", "cleavage", "gravity", "any");
-        ArrayList<Integer> playerWins = new ArrayList<>();
-        ArrayList<Integer> playerPass = new ArrayList<>();
+        ArrayList<String> playerWins = new ArrayList<>();
+        ArrayList<String> playerPass = new ArrayList<>();
         boolean firstTurn = true;
         boolean flag = true;
         int numOfPlayers, playerTurn = 1, cardSelect = 0;
@@ -47,6 +47,7 @@ public class Game {
 
         //The game runs
         while (flag) {
+            System.out.println("Player " + playerTurn + "'s turn!");
             //Display list of cards
             switch (playerTurn) {
                 case 1:
@@ -74,7 +75,8 @@ public class Game {
                 if (cardSelect < 0 || cardSelect >= currentCardSet.size()) {
                     //If the player chooses to pass
                     if (cardSelect == 999) {
-                        playerPass.add(playerTurn);
+                        playerPass.add("player"+playerTurn);
+                        DrawCard(cards, currentCardSet);
                         break;
                     } else {
                         System.out.println("ERROR! Invalid input!");
@@ -93,7 +95,7 @@ public class Game {
             } while (true);
 
             //If this is the first turn
-            if (firstTurn) {
+            if (firstTurn && !(playerPass.contains("player"+playerTurn))) {
                 trumpSelect = SelectTrump(playerInput, trumps);
                 currentHighest = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
                 currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(cardSelect).getStringBasedOnInput(trumpSelect);
@@ -102,7 +104,7 @@ public class Game {
             }
 
             //If this isn't the first turn
-            else {
+            else if (!firstTurn && !(playerPass.contains("player"+playerTurn))){
                 //If it is a regular card
                 if (!(superTrumps.contains(currentCardSet.get(cardSelect).getName()))) {
                     valueSelect = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
@@ -110,6 +112,9 @@ public class Game {
                         System.out.println("The value is not high enough!");
                         System.out.println(currentHighestString);
                         DisplayCards(currentCardSet);
+                        System.out.print("Select your card: ");
+                        cardSelect = playerInput.nextInt();
+                        valueSelect = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
                     }
                     currentHighest = valueSelect;
                     currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(cardSelect).getStringBasedOnInput(trumpSelect);
@@ -131,20 +136,38 @@ public class Game {
                     System.out.println(currentHighestString);
                 }
             }
+            //Remove a card
+            if (cardSelect != 999) { currentCardSet.remove(cardSelect); }
 
             //Check if the player loses all of the cards
             if (currentCardSet.size() == 0) {
                 System.out.println("Player " + playerTurn + " has no more cards!");
-                playerWins.add(playerTurn);
+                playerWins.add("player"+playerTurn);
+            }
+
+            //Updates the card set of each player
+            switch (playerTurn) {
+                case 1:
+                    player1Cards = currentCardSet;
+                    break;
+                case 2:
+                    player2Cards = currentCardSet;
+                    break;
+                case 3:
+                    player3Cards = currentCardSet;
+                    break;
+                case 4:
+                    player4Cards = currentCardSet;
+                    break;
             }
 
             //Change the current player's turn
+            playerTurn++;
             do {
-                playerTurn++;
-                if (playerPass.contains(playerTurn)) playerTurn++;
-                else if (playerWins.contains(playerTurn)) playerTurn++;
-                else if (playerTurn > 4) playerTurn = 1;
-                else break;
+                if (playerPass.contains("player"+playerTurn)) { playerTurn++; }
+                else if (playerWins.contains("player"+playerTurn)) { playerTurn++; }
+                else if (playerTurn > numOfPlayers) { playerTurn = 1; }
+                else { break; }
             } while(true);
 
             //Check if all but one player chose to pass
@@ -162,8 +185,8 @@ public class Game {
         //Prints out the list of winners
         System.out.println("GAME OVER!");
         System.out.println("Winning Players:");
-        for (int i = 0; i < playerWins.size(); i++) {
-            System.out.println(i+1 + ". Player " + playerWins.get(i));
+        for (String each:playerWins) {
+            System.out.println(each);
         }
         System.out.println("Thank you for playing!");
     }
@@ -230,5 +253,12 @@ public class Game {
             System.out.println(i + " -> " + playerCards.get(i));
         }
         System.out.println(999 + " -> pass your turn");
+    }
+
+    //Draws a card for a player
+    public static void DrawCard (ArrayList<Card> cards, ArrayList<Card> playerCards) {
+        Random randnum = new Random();
+        int arraynum = randnum.nextInt(cards.size());
+        playerCards.add(cards.get(arraynum));
     }
 }
