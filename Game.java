@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,21 +8,30 @@ public class Game {
     public static void main(String[] args) throws InputMismatchException{
         Scanner playerInput = new Scanner(System.in);
         ArrayList<Card> cards = new ArrayList<>();
-        ArrayList<Card> player1Cards = new ArrayList<>();
-        ArrayList<Card> player2Cards = new ArrayList<>();
-        ArrayList<Card> player3Cards = new ArrayList<>();
-        ArrayList<Card> player4Cards = new ArrayList<>();
+        CardImgs imgs = new CardImgs();
+        ArrayList<Card> p1Cards = new ArrayList<>();
+        ArrayList<ImageIcon> p1Imgs = new ArrayList<>();
+        ArrayList<Card> p2Cards = new ArrayList<>();
+        ArrayList<ImageIcon> p2Imgs = new ArrayList<>();
+        ArrayList<Card> p3Cards = new ArrayList<>();
+        ArrayList<ImageIcon> p3Imgs = new ArrayList<>();
+        ArrayList<Card> p4Cards = new ArrayList<>();
+        ArrayList<ImageIcon> p4Imgs = new ArrayList<>();
         ArrayList<Card> currentCardSet = new ArrayList<>();
+        ArrayList<ImageIcon> currentCardImgs = new ArrayList<>();
         List<String> superTrumps = Arrays.asList("miner", "petrologist", "gemmologist", "mineralogist", "geophysicist", "geologist");
         List<String> trumps = Arrays.asList("ecovalue", "abundance", "hardness", "cleavage", "gravity", "any");
         ArrayList<String> playerWins = new ArrayList<>();
         ArrayList<String> playerPass = new ArrayList<>();
         boolean firstTurn = true;
         boolean flag = true;
-        int numOfPlayers, playerTurn = 1, cardSelect = 0;
+        int numOfPlayers = 4, playerTurn = 1, cardSelect = 0;
         double currentHighest = 0, valueSelect;
         String trumpSelect = "hardness";
         String currentHighestString = "";
+
+        //JPopUp popup = new JPopUp("How many players? (3-5 players, 1 player will be the dealer)");
+
 
         ReadCSV(cards);
 
@@ -31,19 +41,31 @@ public class Game {
             cards.add(st);
         }
 
-        System.out.println("Welcome to SuperTrumps!\nThis is a 3 - 5 player game. One player will be the dealer.\nPlease enter the number of players.");
-        System.out.print(">>>");
-        numOfPlayers = playerInput.nextInt() - 1;
-        while (numOfPlayers < 2 || numOfPlayers > 4) {
+        /*System.out.println("Welcome to SuperTrumps!\nThis is a 3 - 5 player game. One player will be the dealer.\nPlease enter the number of players.");
+        System.out.print(">>>"); */
+
+        /*popup.setVisible(true);
+        if (!popup.isVisible()) {
+            numOfPlayers = popup.playerAmount;
+            ShuffleCards(cards, imgs, p1Cards, p1Imgs);
+            ShuffleCards(cards, imgs, p2Cards, p2Imgs);
+            if (numOfPlayers >= 3) ShuffleCards(cards, imgs, p3Cards, p3Imgs);
+            if (numOfPlayers == 4) ShuffleCards(cards, imgs, p4Cards, p4Imgs);
+            jGame.setVisible(true);
+        }*/
+
+        /*while (numOfPlayers < 2 || numOfPlayers > 4) {
             System.out.println("ERROR! Please input correctly!");
             System.out.print(">>>");
             numOfPlayers = playerInput.nextInt() - 1;
-        }
+        }*/
 
-        ShuffleCards(cards, player1Cards);
-        ShuffleCards(cards, player2Cards);
-        if (numOfPlayers >= 3) ShuffleCards(cards, player3Cards);
-        if (numOfPlayers == 4) ShuffleCards(cards,player4Cards);
+        ShuffleCards(cards, imgs.getCards(), p1Cards, p1Imgs);
+        ShuffleCards(cards, imgs.getCards(), p2Cards, p2Imgs);
+        if (numOfPlayers >= 3) ShuffleCards(cards, imgs.getCards(), p3Cards, p3Imgs);
+        if (numOfPlayers == 4) ShuffleCards(cards, imgs.getCards(), p4Cards, p4Imgs);
+        JGame jGame = new JGame(cards, p1Cards, p2Cards, p3Cards, p4Cards, p1Imgs, p2Imgs, p3Imgs, p4Imgs);
+        jGame.setVisible(true);
 
         //The game runs
         while (flag) {
@@ -51,20 +73,20 @@ public class Game {
             //Display list of cards
             switch (playerTurn) {
                 case 1:
-                    DisplayCards(player1Cards);
-                    currentCardSet = player1Cards;
+                    DisplayCards(p1Cards);
+                    currentCardSet = p1Cards;
                     break;
                 case 2:
-                    DisplayCards(player2Cards);
-                    currentCardSet = player2Cards;
+                    DisplayCards(p2Cards);
+                    currentCardSet = p2Cards;
                     break;
                 case 3:
-                    DisplayCards(player3Cards);
-                    currentCardSet = player3Cards;
+                    DisplayCards(p3Cards);
+                    currentCardSet = p3Cards;
                     break;
                 case 4:
-                    DisplayCards(player4Cards);
-                    currentCardSet = player4Cards;
+                    DisplayCards(p4Cards);
+                    currentCardSet = p4Cards;
                     break;
             }
 
@@ -76,7 +98,7 @@ public class Game {
                     //If the player chooses to pass
                     if (cardSelect == 999) {
                         playerPass.add("player"+playerTurn);
-                        DrawCard(cards, currentCardSet);
+                        //DrawCard(cards, currentCardSet);
                         break;
                     } else {
                         System.out.println("ERROR! Invalid input!");
@@ -148,16 +170,16 @@ public class Game {
             //Updates the card set of each player
             switch (playerTurn) {
                 case 1:
-                    player1Cards = currentCardSet;
+                    p1Cards = currentCardSet;
                     break;
                 case 2:
-                    player2Cards = currentCardSet;
+                    p2Cards = currentCardSet;
                     break;
                 case 3:
-                    player3Cards = currentCardSet;
+                    p3Cards = currentCardSet;
                     break;
                 case 4:
-                    player4Cards = currentCardSet;
+                    p4Cards = currentCardSet;
                     break;
             }
 
@@ -237,12 +259,13 @@ public class Game {
     }
 
     //Shuffle cards to a player
-    public static void ShuffleCards(ArrayList<Card> cards, ArrayList<Card> playerCards) {
+    public static void ShuffleCards(ArrayList<Card> cards, ArrayList<ImageIcon> cardImgs, ArrayList<Card> playerCards, ArrayList<ImageIcon> playerImgs) {
         Random randNum = new Random();
         int arrayNum;
         for (int i = 0; i < 5; i++) {
             arrayNum = randNum.nextInt(cards.size());
             playerCards.add(cards.get(arrayNum));
+            playerImgs.add(cardImgs.get(arrayNum));
         }
     }
 
@@ -255,9 +278,10 @@ public class Game {
     }
 
     //Draws a card for a player
-    public static void DrawCard (ArrayList<Card> cards, ArrayList<Card> playerCards) {
+    public static void DrawCard (ArrayList<Card> cards, ArrayList<ImageIcon> cardImgs, ArrayList<Card> playerCards, ArrayList<ImageIcon> playerImgs) {
         Random randnum = new Random();
         int arraynum = randnum.nextInt(cards.size());
         playerCards.add(cards.get(arraynum));
+        playerImgs.add(cardImgs.get(arraynum));
     }
 }
