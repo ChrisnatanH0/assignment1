@@ -25,7 +25,7 @@ public class Game {
         ArrayList<String> playerPass = new ArrayList<>();
         boolean firstTurn = true;
         boolean flag = true;
-        int numOfPlayers = 4, playerTurn = 1, cardSelect = 0;
+        int numOfPlayers = 4, playerTurn = 1, id = 0;
         double currentHighest = 0, valueSelect;
         String trumpSelect = "hardness";
         String currentHighestString = "";
@@ -68,7 +68,7 @@ public class Game {
         jGame.setVisible(true);
 
         //The game runs
-        while (flag) {
+        /*while (flag) {
             System.out.println("Player " + playerTurn + "'s turn!");
             //Display list of cards
             switch (playerTurn) {
@@ -91,26 +91,26 @@ public class Game {
             }
 
             System.out.print("Select your card: ");
-            cardSelect = playerInput.nextInt();
+            id = playerInput.nextInt();
             //Error checking
             do {
-                if (cardSelect < 0 || cardSelect >= currentCardSet.size()) {
+                if (id < 0 || id >= currentCardSet.size()) {
                     //If the player chooses to pass
-                    if (cardSelect == 999) {
+                    if (id == 999) {
                         playerPass.add("player"+playerTurn);
                         //DrawCard(cards, currentCardSet);
                         break;
                     } else {
                         System.out.println("ERROR! Invalid input!");
                         System.out.print("Select your card: ");
-                        cardSelect = playerInput.nextInt();
+                        id = playerInput.nextInt();
                     }
                 }
                 //Players cannot use their SuperTrump cards in the first turn
-                else if (firstTurn && superTrumps.contains(currentCardSet.get(cardSelect).getName())){
+                else if (firstTurn && superTrumps.contains(currentCardSet.get(id).getName())){
                     System.out.println("You cannot use a SuperTrump card right now!");
                     System.out.print("Select your card: ");
-                    cardSelect = playerInput.nextInt();
+                    id = playerInput.nextInt();
                 } else {
                     break;
                 }
@@ -119,33 +119,33 @@ public class Game {
             //If this is the first turn
             if (firstTurn && !(playerPass.contains("player"+playerTurn))) {
                 trumpSelect = SelectTrump(playerInput, trumps);
-                currentHighest = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
-                currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(cardSelect).getStringBasedOnInput(trumpSelect);
+                currentHighest = currentCardSet.get(id).getValueBasedOnInput(trumpSelect);
+                currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(id).getStringBasedOnInput(trumpSelect);
                 firstTurn = false;
             }
 
             //If this isn't the first turn
             else if (!firstTurn && !(playerPass.contains("player"+playerTurn))){
                 //If it is a regular card
-                if (!(superTrumps.contains(currentCardSet.get(cardSelect).getName()))) {
-                    valueSelect = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
+                if (!(superTrumps.contains(currentCardSet.get(id).getName()))) {
+                    valueSelect = currentCardSet.get(id).getValueBasedOnInput(trumpSelect);
                     while (valueSelect <= currentHighest) {
                         System.out.println("The value is not high enough!");
                         System.out.println(currentHighestString);
                         DisplayCards(currentCardSet);
                         System.out.print("Select your card: ");
-                        cardSelect = playerInput.nextInt();
-                        valueSelect = currentCardSet.get(cardSelect).getValueBasedOnInput(trumpSelect);
+                        id = playerInput.nextInt();
+                        valueSelect = currentCardSet.get(id).getValueBasedOnInput(trumpSelect);
                     }
                     currentHighest = valueSelect;
-                    currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(cardSelect).getStringBasedOnInput(trumpSelect);
+                    currentHighestString = "The current highest " + trumpSelect + ": " + currentCardSet.get(id).getStringBasedOnInput(trumpSelect);
                 }
 
                 //If it is a SuperTrump card
                 else {
                     //Check if it is the Geologist card
-                    if (!Objects.equals(currentCardSet.get(cardSelect).getName(), "geologist")) {
-                        trumpSelect = currentCardSet.get(cardSelect).getTrump();
+                    if (!Objects.equals(currentCardSet.get(id).getName(), "geologist")) {
+                        trumpSelect = currentCardSet.get(id).getTrump();
                     } else {
                         trumpSelect = SelectTrump(playerInput, trumps);
                     }
@@ -159,7 +159,7 @@ public class Game {
             System.out.println(currentHighestString);
 
             //Remove a card
-            if (cardSelect != 999) { currentCardSet.remove(cardSelect); }
+            if (id != 999) { currentCardSet.remove(id); }
 
             //Check if the player loses all of the cards
             if (currentCardSet.size() == 0) {
@@ -209,7 +209,7 @@ public class Game {
         for (String each:playerWins) {
             System.out.println(each);
         }
-        System.out.println("Thank you for playing!");
+        System.out.println("Thank you for playing!");*/
     }
 
     //Select a trump
