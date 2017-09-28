@@ -64,7 +64,7 @@ public class Game {
         ShuffleCards(cards, imgs.getCards(), p2Cards, p2Imgs);
         if (numOfPlayers >= 3) ShuffleCards(cards, imgs.getCards(), p3Cards, p3Imgs);
         if (numOfPlayers == 4) ShuffleCards(cards, imgs.getCards(), p4Cards, p4Imgs);
-        JGame jGame = new JGame(cards, p1Cards, p2Cards, p3Cards, p4Cards, p1Imgs, p2Imgs, p3Imgs, p4Imgs);
+        JGame jGame = new JGame(cards, imgs.cards, p1Cards, p2Cards, p3Cards, p4Cards, p1Imgs, p2Imgs, p3Imgs, p4Imgs);
         jGame.setVisible(true);
 
         //The game runs
@@ -98,7 +98,7 @@ public class Game {
                     //If the player chooses to pass
                     if (id == 999) {
                         playerPass.add("player"+playerTurn);
-                        //DrawCard(cards, currentCardSet);
+                        DrawCard(cards, currentCardSet);
                         break;
                     } else {
                         System.out.println("ERROR! Invalid input!");
