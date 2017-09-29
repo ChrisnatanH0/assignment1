@@ -10,39 +10,39 @@ import javax.swing.JOptionPane;
 
 public class JGame extends JFrame implements ActionListener {
     //New variables
-    JPanel panel1, panel2, panel3, mp;
-    JLabel label = new JLabel();
-    JLabel topCard = new JLabel();
-    JButton cardButton = new JButton();
-    JButton prev = new JButton("< Prev. Card");
-    JButton next = new JButton("Next Card >");
-    JButton pass = new JButton("Pass Turn");
-    Font font = new Font("Arial", Font.BOLD, 36);
-    ImageIcon topIcon;
-    ImageIcon buttonIcon;
-    ArrayList<Card> p1Cards, p2Cards, p3Cards, p4Cards;
-    ArrayList<ImageIcon> p1Imgs, p2Imgs, p3Imgs, p4Imgs;
+    private JPanel panel1, panel2, panel3, mp;
+    private JLabel label = new JLabel();
+    private JLabel topCard = new JLabel();
+    private JButton cardButton = new JButton();
+    private JButton prev = new JButton("< Prev. Card");
+    private JButton next = new JButton("Next Card >");
+    private JButton pass = new JButton("Pass Turn");
+    private Font font = new Font("Arial", Font.BOLD, 36);
+    private ImageIcon topIcon;
+    private ImageIcon buttonIcon;
+    private ArrayList<Card> p1Cards, p2Cards, p3Cards, p4Cards;
+    private ArrayList<ImageIcon> p1Imgs, p2Imgs, p3Imgs, p4Imgs;
 
     //Old variables from Game
-    ArrayList<Card> cards = new ArrayList<>();
-    ArrayList<ImageIcon> imgs = new ArrayList<>();
-    ArrayList<Card> currentCardSet = new ArrayList<>();
-    ArrayList<ImageIcon> currentImgSet = new ArrayList<>();
-    ArrayList<String> playerWins = new ArrayList<>();
-    ArrayList<String> playerPass = new ArrayList<>();
-    List<String> superTrumps = Arrays.asList("miner", "petrologist", "gemmologist", "mineralogist", "geophysicist", "geologist");
-    List<String> trumps = Arrays.asList("ecovalue", "abundance", "hardness", "cleavage", "gravity", "any");
-    boolean firstTurn = true;
-    int numOfPlayers = 4, playerTurn = 1, id = 0;
-    double currentHighest = 0, valueSelect;
-    String trumpSelect = "hardness";
-    boolean flag = false;
+    private ArrayList<Card> cards = new ArrayList<>();
+    private ArrayList<ImageIcon> imgs = new ArrayList<>();
+    private ArrayList<Card> currentCardSet = new ArrayList<>();
+    private ArrayList<ImageIcon> currentImgSet = new ArrayList<>();
+    private ArrayList<String> playerWins = new ArrayList<>();
+    private ArrayList<String> playerPass = new ArrayList<>();
+    private List<String> superTrumps = Arrays.asList("miner", "petrologist", "gemmologist", "mineralogist", "geophysicist", "geologist");
+    private List<String> trumps = Arrays.asList("ecovalue", "abundance", "hardness", "cleavage", "gravity", "any");
+    private boolean firstTurn = true;
+    private int numOfPlayers = 4, playerTurn = 1, id = 0;
+    private double currentHighest = 0, valueSelect;
+    private String trumpSelect = "hardness";
+    private boolean flag = false;
 
     public JGame(ArrayList<Card> cards, ArrayList<ImageIcon> imgs, ArrayList<Card> p1Cards, ArrayList<Card> p2Cards, ArrayList<Card> p3Cards, ArrayList<Card> p4Cards,
                  ArrayList<ImageIcon> p1Imgs, ArrayList<ImageIcon> p2Imgs, ArrayList<ImageIcon> p3Imgs, ArrayList<ImageIcon> p4Imgs) {
         super("SuperTrumps");
         setSize(2500, 3000);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         this.cards = cards;
         this.imgs = imgs;
@@ -106,7 +106,7 @@ public class JGame extends JFrame implements ActionListener {
         pass.addActionListener(this);
 
         numOfPlayers = Integer.parseInt(JOptionPane.showInputDialog(mp, "How many players? (2 - 4 players)", 4));
-        while (numOfPlayers < 2 || numOfPlayers > 4 || numOfPlayers == 0) {
+        while (numOfPlayers < 2 || numOfPlayers > 4 || numOfPlayers == JOptionPane.CANCEL_OPTION) {
             numOfPlayers = Integer.parseInt(JOptionPane.showInputDialog(mp, "Please input correctly! (2 - 4 players)", 4));
         }
     }
@@ -126,7 +126,7 @@ public class JGame extends JFrame implements ActionListener {
         //Next card
         else if (e.getSource() == next) {
             id += 1;
-            if (id > currentImgSet.size() - 1) {
+            if (id >= currentImgSet.size()) {
                 id = 0;
             }
             buttonIcon = new ImageIcon(String.valueOf(currentImgSet.get(id)));
@@ -198,12 +198,13 @@ public class JGame extends JFrame implements ActionListener {
         }
     }
 
-    public void PostProcessing() {
+    //Things to do after player's turn
+    private void PostProcessing() {
         currentCardSet.remove(id);
         currentImgSet.remove(id);
 
         if (currentCardSet.size() == 0) {
-            System.out.println("Player " + playerTurn + " has no more cards!");
+            JOptionPane.showMessageDialog(mp, "Player " + playerTurn + " has no more cards!");
             playerWins.add("player"+playerTurn);
         }
 
@@ -264,13 +265,16 @@ public class JGame extends JFrame implements ActionListener {
 
         if (playerWins.size() == numOfPlayers - 1) {
            JOptionPane.showMessageDialog(mp, "GAME OVER! Thanks for Playing!");
+           System.exit(0);
         }
 
         label.setText("Player " + playerTurn + "'s turn!");
+        id = 0;
         buttonIcon = new ImageIcon(String.valueOf(currentImgSet.get(id)));
         cardButton.setIcon(ResizedIcon(buttonIcon, 500, 700));
     }
 
+    //Resize card images
     private static Icon ResizedIcon(ImageIcon icon, int resizedWidth, int resizedHeight) {
         Image img = icon.getImage();
         Image resizedImg = img.getScaledInstance(resizedWidth, resizedHeight, Image.SCALE_SMOOTH);
